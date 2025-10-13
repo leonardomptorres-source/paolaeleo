@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quiz com Google Sheets</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+    .progress-bar { height: 20px; background: #eee; border-radius: 10px; margin-bottom: 20px; }
+    .progress { height: 100%; background: #4caf50; border-radius: 10px; }
+    button { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Quiz</h1>
+
+    <div class="progress-bar">
+      <div class="progress" :style="{ width: progressPercent + '%' }"></div>
+    </div>
+    <p>{{ currentIndex + 1 }} de {{ questions.length }} perguntas</p>
+
+    <div v-if="currentQuestion">
+      <h3>{{ currentQuestion.text }}</h3>
+      <div v-for="option in currentQuestion.options" :key="option">
+        <label>
+          <input type="radio" :value="option" v-model="answer" /> {{ option }}
+        </label>
+      </div>
+      <button @click="sendAnswer" :disabled="!answer">Próxima</button>
+    </div>
+
+    <div v-else>
+      <h2>Parabéns! Você concluiu 🎉</h2>
+    </div>
+  </div>
+
+  <script>
+  const { createApp } = Vue;
+
+  createApp({
+    data() {
+      return {
+        currentIndex: 0,
+        answer: "",
+        questions: [
+          { text: "Qual é a sua cor favorita?", options: ["Azul", "Verde", "Vermelho"] },
+          { text: "Qual é seu animal preferido?", options: ["Cachorro", "Gato", "Pássaro"] },
+          { text: "Qual cidade você gostaria de visitar?", options: ["Paris", "Tóquio", "Rio de Janeiro"] },
+        ],
+        googleScriptURL: "https://script.google.com/macros/s/SEU_ID_AQUI/exec"
+      };
+    },
+    computed: {
+      progressPercent() {
+        return ((this.currentIndex) / this.questions.length) * 100;
+      },
+      currentQuestion() {
+        return this.questions[this.currentIndex] || null;
+      }
+    },
+    methods: {
+      async sendAnswer() {
+        const q = this.currentQuestion;
+        const payload = {
+          pergunta: q.text,
+          resposta: this.answer,
+          usuario: "visitante"
+        };
+
+        await fetch(this.googleScriptURL, {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: { "Content-Type": "application/json" }
+        });
+
+        this.answer = "";
+        this.currentIndex++;
+      }
+    }
+  }).mount("#app");
+  </script>
+</body>
+</html>
