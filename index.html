@@ -100,7 +100,6 @@
         };
         await fetch(this.googleScriptURL, {
           method: "POST",
-			mode: "cors",
           body: JSON.stringify(payload),
           headers: { "Content-Type": "application/json" }
         });
@@ -115,7 +114,6 @@
       async finishQuiz() {
         const res = await fetch(this.googleScriptURL, {
           method: "POST",
-			mode: "cors",
           body: JSON.stringify({ nome: this.nome, finalizar: true }),
           headers: { "Content-Type": "application/json" }
         });
