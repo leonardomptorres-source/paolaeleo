@@ -43,7 +43,8 @@
       el: '#app',
   
       data: {
-          rows: []
+          rows: [],
+        googleScriptURL: "https://script.google.com/macros/s/AKfycbzuCCmbHMNDgUl_fTMF8KwQFDuRAcnHmlf1zw10_muUN89h7GkvJX4YJu2QjiArepYbjQ/exec"
       },
   
       created: function () {
@@ -51,10 +52,13 @@
       },
   
       methods: {
-          GetData: function () {
-              $.get("https://script.google.com/macros/s/AKfycbzuCCmbHMNDgUl_fTMF8KwQFDuRAcnHmlf1zw10_muUN89h7GkvJX4YJu2QjiArepYbjQ/exec", function (data) {
-                  app.rows = data;
-              });
+          async GetData() {
+            const res = await fetch(this.googleScriptURL, {
+              method: "GET",
+              headers: { "Content-Type": "application/json" }
+            });
+            const data = await res.json();
+            this.rows = data;
           }
       }
   });
