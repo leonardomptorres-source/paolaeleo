@@ -39,25 +39,25 @@
   </div>
 
   <script>
-    const { createApp } = Vue;
-
-    createApp({
-      data() {
-        return {
+  var app = new Vue({
+      el: '#app',
+  
+      data: {
           rows: []
-        };
       },
-      mounted() {
-        fetch('https://script.google.com/macros/s/AKfycbzuCCmbHMNDgUl_fTMF8KwQFDuRAcnHmlf1zw10_muUN89h7GkvJX4YJu2QjiArepYbjQ/exec')
-          .then(response => response.json())
-          .then(data => {
-            this.rows = data;
-          })
-          .catch(error => {
-            console.error('Erro ao buscar dados:', error);
-          });
+  
+      created: function () {
+          this.GetData();
+      },
+  
+      methods: {
+          GetData: function () {
+              $.get("https://script.google.com/macros/s/AKfycbzuCCmbHMNDgUl_fTMF8KwQFDuRAcnHmlf1zw10_muUN89h7GkvJX4YJu2QjiArepYbjQ/exec", function (data) {
+                  app.rows = data;
+              });
+          }
       }
-    }).mount('#app');
+  });
   </script>
 </body>
 </html>
